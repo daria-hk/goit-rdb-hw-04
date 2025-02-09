@@ -87,3 +87,157 @@ INSERT INTO borrowed_books (book_id, user_id, borrow_date, return_date) VALUES
 (1, 1, '2024-02-01', '2024-02-10'),
 (2, 2, '2024-02-03', NULL);
 
+3.
+SELECT 
+    order_details.id AS order_detail_id, 
+    order_details.order_id, 
+    order_details.product_id, 
+    order_details.quantity AS order_detail_quantity, 
+    orders.id AS order_id, 
+    orders.customer_id, 
+    orders.employee_id, 
+    orders.date AS order_date, 
+    orders.shipper_id,
+    customers.name AS customer_name,
+    customers.contact AS customer_contact,
+    customers.address AS customer_address,
+    customers.city AS customer_city,
+    customers.postal_code AS customer_postal_code,
+    customers.country AS customer_country,
+    products.name AS product_name,
+    products.supplier_id AS product_supplier_id,
+    products.category_id AS product_category_id,
+    products.unit AS product_unit,
+    products.price AS product_price,
+    categories.name AS category_name,
+    categories.description AS category_description,
+    employees.last_name AS employee_last_name,
+    employees.first_name AS employee_first_name,
+    employees.birthdate AS employee_birthdate,
+    employees.photo AS employee_photo,
+    employees.notes AS employee_notes,
+    shippers.name AS shipper_name,
+    shippers.phone AS shipper_phone,
+    suppliers.name AS supplier_name,
+    suppliers.contact AS supplier_contact,
+    suppliers.address AS supplier_address,
+    suppliers.city AS supplier_city,
+    suppliers.postal_code AS supplier_postal_code,
+    suppliers.country AS supplier_country,
+    suppliers.phone AS supplier_phone
+FROM mydb.orders
+INNER JOIN mydb.order_details ON orders.id = order_details.order_id
+INNER JOIN mydb.customers ON orders.customer_id = customers.id
+INNER JOIN mydb.products ON order_details.product_id = products.id
+INNER JOIN mydb.categories ON products.category_id = categories.id
+INNER JOIN mydb.employees ON orders.employee_id = employees.employee_id
+INNER JOIN mydb.shippers ON orders.shipper_id = shippers.id
+INNER JOIN mydb.suppliers ON products.supplier_id = suppliers.id;
+
+
+4.a
+SELECT COUNT(*) AS count_total_rows
+FROM mydb.orders
+INNER JOIN mydb.order_details ON orders.id = order_details.order_id
+INNER JOIN mydb.customers ON orders.customer_id = customers.id
+INNER JOIN mydb.products ON order_details.product_id = products.id
+INNER JOIN mydb.categories ON products.category_id = categories.id
+INNER JOIN mydb.employees ON orders.employee_id = employees.employee_id
+INNER JOIN mydb.shippers ON orders.shipper_id = shippers.id
+INNER JOIN mydb.suppliers ON products.supplier_id = suppliers.id;
+
+
+4.b
+SELECT COUNT(*) AS count_total_rows
+FROM mydb.orders
+LEFT JOIN mydb.order_details ON orders.id = order_details.order_id
+LEFT JOIN mydb.customers ON orders.customer_id = customers.id
+LEFT JOIN mydb.products ON order_details.product_id = products.id
+LEFT JOIN mydb.categories ON products.category_id = categories.id
+LEFT JOIN mydb.employees ON orders.employee_id = employees.employee_id
+LEFT JOIN mydb.shippers ON orders.shipper_id = shippers.id
+LEFT JOIN mydb.suppliers ON products.supplier_id = suppliers.id;
+
+Кількість рядків лишилась незмінною.
+INNER JOIN повертає рядки, де є відповідності в обох таблицях.
+LEFT JOIN повертає всі рядки з лівої таблиці та NULL, якщо немає збігів у правій. 
+INNER JOIN в цьому випадку повертає всі рядки тому LEFT JOIN не показує зміни при COUNT 
+
+4.c
+SELECT *
+FROM mydb.orders
+INNER JOIN mydb.order_details ON orders.id = order_details.order_id
+INNER JOIN mydb.customers ON orders.customer_id = customers.id
+INNER JOIN mydb.products ON order_details.product_id = products.id
+INNER JOIN mydb.categories ON products.category_id = categories.id
+INNER JOIN mydb.employees ON orders.employee_id = employees.employee_id
+INNER JOIN mydb.shippers ON orders.shipper_id = shippers.id
+INNER JOIN mydb.suppliers ON products.supplier_id = suppliers.id
+WHERE orders.employee_id > 3 AND orders.employee_id <= 10;
+
+4.d
+SELECT 
+    categories.name AS category_name, 
+    COUNT(*) AS count_total_rows, 
+    AVG(order_details.quantity) AS order_details_avg_quantity
+FROM mydb.orders
+INNER JOIN mydb.order_details ON orders.id = order_details.order_id£
+INNER JOIN mydb.customers ON orders.customer_id = customers.id
+INNER JOIN mydb.products ON order_details.product_id = products.id
+INNER JOIN mydb.categories ON products.category_id = categories.id
+INNER JOIN mydb.employees ON orders.employee_id = employees.employee_id
+INNER JOIN mydb.shippers ON orders.shipper_id = shippers.id
+INNER JOIN mydb.suppliers ON products.supplier_id = suppliers.id
+GROUP BY categories.name;
+
+
+4.e
+SELECT 
+    categories.name AS category_name, 
+    COUNT(*) AS count_total_rows, 
+    AVG(order_details.quantity) AS order_details_avg_quantity
+FROM mydb.orders
+INNER JOIN mydb.order_details ON orders.id = order_details.order_id
+INNER JOIN mydb.customers ON orders.customer_id = customers.id
+INNER JOIN mydb.products ON order_details.product_id = products.id
+INNER JOIN mydb.categories ON products.category_id = categories.id
+INNER JOIN mydb.employees ON orders.employee_id = employees.employee_id
+INNER JOIN mydb.shippers ON orders.shipper_id = shippers.id
+INNER JOIN mydb.suppliers ON products.supplier_id = suppliers.id
+GROUP BY categories.name
+HAVING AVG(order_details.quantity) > 21;
+
+4.f
+SELECT 
+    categories.name AS category_name, 
+    COUNT(*) AS count_total_rows, 
+    AVG(order_details.quantity) AS order_details_avg_quantity
+FROM mydb.orders
+INNER JOIN mydb.order_details ON orders.id = order_details.order_id
+INNER JOIN mydb.customers ON orders.customer_id = customers.id
+INNER JOIN mydb.products ON order_details.product_id = products.id
+INNER JOIN mydb.categories ON products.category_id = categories.id
+INNER JOIN mydb.employees ON orders.employee_id = employees.employee_id
+INNER JOIN mydb.shippers ON orders.shipper_id = shippers.id
+INNER JOIN mydb.suppliers ON products.supplier_id = suppliers.id
+GROUP BY categories.name
+HAVING AVG(order_details.quantity) > 21
+ORDER BY count_total_rows DESC;
+
+4.g
+SELECT 
+    categories.name AS category_name, 
+    COUNT(*) AS count_total_rows, 
+    AVG(order_details.quantity) AS order_details_avg_quantity
+FROM mydb.orders
+INNER JOIN mydb.order_details ON orders.id = order_details.order_id
+INNER JOIN mydb.customers ON orders.customer_id = customers.id
+INNER JOIN mydb.products ON order_details.product_id = products.id
+INNER JOIN mydb.categories ON products.category_id = categories.id
+INNER JOIN mydb.employees ON orders.employee_id = employees.employee_id
+INNER JOIN mydb.shippers ON orders.shipper_id = shippers.id
+INNER JOIN mydb.suppliers ON products.supplier_id = suppliers.id
+GROUP BY categories.name
+HAVING AVG(order_details.quantity) > 21
+ORDER BY count_total_rows DESC
+LIMIT 4 OFFSET 1;
