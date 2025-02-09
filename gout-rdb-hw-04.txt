@@ -1,0 +1,89 @@
+1.a
+CREATE DATABASE LibraryManagement;
+
+1.b
+USE LibraryManagement;
+
+CREATE TABLE authors (
+    author_id INT AUTO_INCREMENT PRIMARY KEY,
+    author_name VARCHAR(255)
+);
+
+1.c
+USE LibraryManagement;
+
+CREATE TABLE genres (
+    genre_id INT AUTO_INCREMENT PRIMARY KEY,
+    genre_name VARCHAR(255)
+);
+
+1.d
+USE LibraryManagement;
+
+CREATE TABLE books (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    publication_year YEAR,
+    author_id INT,
+    genre_id INT,
+    FOREIGN KEY (author_id) REFERENCES authors(author_id),
+    FOREIGN KEY (genre_id) REFERENCES genres(genre_id)
+);
+
+1.e
+USE LibraryManagement;
+
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255),
+    email VARCHAR(255)
+);
+
+1.f
+USE LibraryManagement;
+
+CREATE TABLE borrowed_books (
+    borrow_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT,
+    user_id INT,
+    borrow_date DATE,
+    return_date DATE,
+    FOREIGN KEY (book_id) REFERENCES books(book_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+
+2.a
+USE LibraryManagement;
+
+INSERT INTO authors (author_name) VALUES 
+('Stephen King'),
+('Erich Maria Remarque');
+
+2.b
+
+USE LibraryManagement;
+
+INSERT INTO genres (genre_name) VALUES 
+('Horror'),
+('Novel');
+
+2.c
+USE LibraryManagement;
+
+INSERT INTO books (title, publication_year, author_id, genre_id) VALUES 
+('The Shining', 1997, 1, 1),
+('Spark of Life', 1952, 2, 2);
+
+2.d
+USE LibraryManagement;
+
+INSERT INTO users (username, email) VALUES 
+('bobby_brown', 'bobby.brown@test.com'),
+('nina_simone', 'nina.simone@test.com');
+
+2.e
+INSERT INTO borrowed_books (book_id, user_id, borrow_date, return_date) VALUES 
+(1, 1, '2024-02-01', '2024-02-10'),
+(2, 2, '2024-02-03', NULL);
+
